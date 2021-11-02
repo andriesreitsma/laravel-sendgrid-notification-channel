@@ -1,0 +1,47 @@
+{
+    "name":"konstruktiv/laravel-sendgrid-notification-channel",
+    "description": "Our Laravel Sendgrid Notification package",
+    "license": "MIT",
+    "homepage": "https://konstruktiv.nl",
+    "authors": [
+        {
+            "name": "Konstruktiv B.V.",
+            "email": "info@konstruktiv.nl"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "illuminate/notifications": "^6|^7|^8",
+        "illuminate/support": "^6|^7|^8",
+        "sendgrid/sendgrid":  "^7.10",
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload":{
+        "psr-4":{
+            "Konstruktiv\\SendGridNotificationChannel\\":"src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Konstruktiv\\SendGridNotificationChannel\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Konstruktiv\\SendGridNotificationChannel\\SendGridNotificationChannelServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
