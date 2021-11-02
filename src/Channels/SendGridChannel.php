@@ -13,6 +13,7 @@ use SendGrid\Mail\Mail;
 use SendGrid\Mail\MailSettings;
 use SendGrid\Mail\SandBoxMode;
 use SendGrid\Mail\SpamCheck;
+use SendGrid\Response;
 
 class SendGridChannel
 {
@@ -65,7 +66,7 @@ class SendGridChannel
      * @param SendGrid $sendGrid
      * @param bool $sandbox
      */
-    public function __construct(SendGrid $sendGrid)
+    public function __construct(\SendGrid $sendGrid)
     {
         $this->sendGrid = $sendGrid;
         $this->bcc_settings = config('sendgrid.bcc_settings');
@@ -117,7 +118,7 @@ class SendGridChannel
         if($message->payload) {
             $email->addDynamicTemplateDatas($message->payload);
         }
-        
+
         $email->setMailSettings(
             new MailSettings(
                 $this->bcc_settings,
@@ -128,9 +129,18 @@ class SendGridChannel
             )
         );
 
-        return $this->sendGrid->send(
+        /**
+         * @var Response $response
+         */
+        $response = $this->sendGrid->send(
             $email
         );
+
+        if(!in_array($response->statusCode(),[200,202])) {
+            throw new \Exception($response->body());
+        }
+
+        return $response;
 
     }
 

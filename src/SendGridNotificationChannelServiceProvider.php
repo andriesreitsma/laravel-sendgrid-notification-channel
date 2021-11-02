@@ -3,13 +3,13 @@
 namespace Konstruktiv\SendGridNotificationChannel;
 
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Konstruktiv\SendGridNotificationChannel\Channels\SendGridChannel;
 use SendGrid;
 
-class SendGridNotificationChannelServiceProvider extends ServiceProvider implements DeferrableProvider
+class SendGridNotificationChannelServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -20,9 +20,9 @@ class SendGridNotificationChannelServiceProvider extends ServiceProvider impleme
 
         $this->app->when(SendGridChannel::class)
             ->needs(SendGrid::class)
-            ->give(function () {
+            ->give(static function () {
                 return new SendGrid(
-                    $this->app['config']['sendgrid.api_key']
+                    config('sendgrid.api_key')
                 );
             });
     }

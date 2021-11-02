@@ -32,19 +32,20 @@ class ExampleNotification extends Notification
         ];
     }
     
-    // ...
-
-    public function toSendGrid($notifiable)
+    /**
+     * Get the SendGrid representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return SendGridMessage
+     */
+    public function toSendGrid(mixed $notifiable): SendGridMessage
     {
         return (new SendGridMessage('Your SendGrid template ID'))
             ->subject('Subject goes here')
             ->from('sendgrid@example.com','SendGrid')
             ->to(
                 $notifiable->email,
-                $notifiable->name,
-                [
-                    'key' => 'value'
-                ]
+                $notifiable->name
             )
             ->payload([
                 'key' => 'value'
