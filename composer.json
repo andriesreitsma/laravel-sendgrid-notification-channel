@@ -13,7 +13,7 @@
         "php": "^7.3|^8.0",
         "illuminate/notifications": "^6|^7|^8",
         "illuminate/support": "^6|^7|^8",
-        "sendgrid/sendgrid":  "^7.10",
+        "sendgrid/sendgrid":  "^7.10"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0"
