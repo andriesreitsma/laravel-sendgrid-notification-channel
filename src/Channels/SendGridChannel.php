@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Konstruktiv\SendGridNotificationChannel\Channels;
 
+use Exception;
 use Illuminate\Notifications\Notification;
 use Konstruktiv\SendGridNotificationChannel\Messages\SendGridMessage;
+use SendGrid;
 use SendGrid\Mail\BccSettings;
 use SendGrid\Mail\BypassListManagement;
 use SendGrid\Mail\Footer;
@@ -23,7 +25,7 @@ class SendGridChannel
      *
      * @var SendGrid
      */
-    protected $sendGrid;
+    protected SendGrid $sendGrid;
 
     /**
      * The SendGrid bcc_settings variable
@@ -64,7 +66,6 @@ class SendGridChannel
      * Create a new SendGrid channel instance.
      *
      * @param SendGrid $sendGrid
-     * @param bool $sandbox
      */
     public function __construct(\SendGrid $sendGrid)
     {
@@ -80,11 +81,13 @@ class SendGridChannel
      * Send the given notification.
      *
      * @param mixed $notifiable
-     * @param \Illuminate\Notifications\Notification $notification
+     * @param Notification $notification
      *
-     * @throws \Exception
+     * @return Response
+     * @throws SendGrid\Mail\TypeException
+     * @throws Exception
      */
-    public function send($notifiable, Notification $notification)
+    public function send($notifiable, Notification $notification): Response
     {
         if (! method_exists($notification, 'toSendGrid')) {
             throw new Exception('You must implement toSendGrid in the notification class for SendGrid channel.');
@@ -99,19 +102,14 @@ class SendGridChannel
             throw new Exception('Not an valid instance of SendGridMessage found');
         }
 
-        /**
-         * @var Mail $email
-         */
         $email = new Mail(
             $message->from,
             $message->tos
         );
 
-        if($message->templateId) {
-            $email->setTemplateId($message->templateId);
-        }
+        $email->setTemplateId($message->templateId);
 
-        if($message->attachment) {
+        if(isset($message->attachment)) {
             $email->addAttachment($message->attachment);
         }
 
@@ -129,15 +127,12 @@ class SendGridChannel
             )
         );
 
-        /**
-         * @var Response $response
-         */
         $response = $this->sendGrid->send(
             $email
         );
 
         if(!in_array($response->statusCode(),[200,202])) {
-            throw new \Exception($response->body());
+            throw new Exception($response->body());
         }
 
         return $response;

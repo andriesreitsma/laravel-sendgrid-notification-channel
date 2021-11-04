@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Konstruktiv\SendGridNotificationChannel\Messages;
 
-use PhpParser\Node\Scalar\String_;
 use SendGrid\Mail\Attachment;
-use SendGrid\Mail\Mail;
+use SendGrid\Mail\From;
 use SendGrid\Mail\ReplyTo;
 use SendGrid\Mail\Subject;
 use SendGrid\Mail\Substitution;
 use SendGrid\Mail\To;
-use SendGrid\Mail\From;
+use SendGrid\Mail\TypeException;
 
 
 class SendGridMessage
@@ -21,49 +20,49 @@ class SendGridMessage
      *
      * @var From
      */
-    public $from;
+    public From $from;
 
     /**
      * The "reply-to" for the message.
      *
      * @var ReplyTo
      */
-    public $replyTo;
+    public ReplyTo $replyTo;
 
     /**
      * The "tos" for the message.
      *
      * @var array[To]
      */
-    public $tos = [];
+    public array $tos = [];
 
     /**
      * The "subject" for the message.
      *
-     * @var string
+     * @var Subject
      */
-    public $subject = '';
+    public Subject $subject;
 
     /**
      * The SendGrid Template ID for the message.
      *
      * @var string
      */
-    public $templateId;
+    public string $templateId;
 
     /**
      * The "payload" for the message.
      *
      * @var array|Substitution[]
      */
-    public $payload = [];
+    public array $payload = [];
 
     /**
      * The SendGrid Attachment for the message.
      *
      * @var Attachment
      */
-    public $attachment;
+    public Attachment $attachment;
 
     /**
      * Create a new SendGrid channel instance.
@@ -72,7 +71,7 @@ class SendGridMessage
      * @return void
      */
 
-    public function __construct($templateId)
+    public function __construct(string $templateId)
     {
         $this->templateId = $templateId;
     }
@@ -83,14 +82,21 @@ class SendGridMessage
      * @param string $email
      * @param string $name
      * @return $this
+     * @throws TypeException
      */
-    public function from($email, $name)
+    public function from(string $email, string $name): SendGridMessage
     {
         $this->from = new From($email, $name);
         return $this;
     }
 
-    public function replyTo($email, $name)
+    /**
+     * @param string $email
+     * @param string $name
+     * @return $this
+     * @throws TypeException
+     */
+    public function replyTo(string $email, string $name): SendGridMessage
     {
         $this->replyTo = new ReplyTo($email, $name);
         return $this;
@@ -103,8 +109,9 @@ class SendGridMessage
      * @param string $name
      * @param array $data
      * @return $this
+     * @throws TypeException
      */
-    public function to($email, $name, $data = [])
+    public function to(string $email, string $name, array $data = []): SendGridMessage
     {
         $this->tos = array_merge($this->tos, [new To($email, $name, $data)]);
         return $this;
@@ -115,8 +122,9 @@ class SendGridMessage
      *
      * @param string $subject
      * @return $this
+     * @throws TypeException
      */
-    public function subject($subject)
+    public function subject(string $subject): SendGridMessage
     {
         $this->subject = new Subject($subject);
         return $this;
@@ -125,10 +133,10 @@ class SendGridMessage
     /**
      * Set the "payload".
      *
-     * @param string $subject
+     * @param array $payload
      * @return $this
      */
-    public function payload($payload)
+    public function payload(array $payload): SendGridMessage
     {
         $this->payload = $payload;
 
@@ -142,8 +150,10 @@ class SendGridMessage
      * @param string $mimeType
      * @param string $filename
      * @return $this
+     * @throws TypeException
      */
-    public function attachment(string $content , string $mimeType, string $filename) {
+    public function attachment(string $content , string $mimeType, string $filename): SendGridMessage
+    {
         $this->attachment = new Attachment(
             $content,
             $mimeType,

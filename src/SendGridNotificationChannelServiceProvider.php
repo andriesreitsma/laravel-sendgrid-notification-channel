@@ -3,7 +3,7 @@
 namespace Konstruktiv\SendGridNotificationChannel;
 
 use Illuminate\Container\Container;
-use Illuminate\Notifications\ChannelManager;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Konstruktiv\SendGridNotificationChannel\Channels\SendGridChannel;
@@ -30,6 +30,7 @@ class SendGridNotificationChannelServiceProvider extends ServiceProvider
     /**
      * Register application service.
      * @return void
+     * @throws BindingResolutionException
      */
     public function register()
     {
