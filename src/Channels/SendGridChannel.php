@@ -72,6 +72,9 @@ class SendGridChannel
         $this->sendGrid = $sendGrid;
         $this->bcc_settings = config('sendgrid.bcc_settings');
         $this->bypass_list_management = config('sendgrid.bypass_list_management');
+        $this->bypass_bounce_management = config('sendgrid.bypass_bounce_management');
+        $this->bypass_spam_management = config('sendgrid.bypass_spam_management');
+        $this->bypass_unsubscribe_management = config('sendgrid.bypass_unsubscribe_management');
         $this->footer = config('sendgrid.footer');
         $this->sandbox_mode = config('sendgrid.sandbox_mode');
         $this->spam_check = config('sendgrid.spam_check');
@@ -120,7 +123,10 @@ class SendGridChannel
         $email->setMailSettings(
             new MailSettings(
                 $this->bcc_settings,
+                $this->bypass_bounce_management,
                 $this->bypass_list_management,
+                $this->bypass_spam_management,
+                $this->bypass_unsubscribe_management,
                 $this->footer,
                 $this->sandbox_mode,
                 $this->spam_check
